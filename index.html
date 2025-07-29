@@ -48,6 +48,21 @@
     <option value="Callaway">Callaway</option>
     <option value="Varie">Varie</option>
   </select>
+  <select id="taglia">
+    <option value="">Taglia</option>
+    <option value="XS">XS</option>
+    <option value="S">S</option>
+    <option value="M">M</option>
+    <option value="M/L">M/L</option>
+    <option value="L">L</option>
+    <option value="XL">XL</option>
+    <option value="30X32">30X32</option>
+    <option value="30X30">30X30</option>
+    <option value="32X32">32X32</option>
+    <option value="34X32">34X32</option>
+    <option value="36X32">36X32</option>
+    <option value="UNICA">UNICA</option>
+  </select>
   <input id="quantita" type="number" placeholder="Quantità">
   <input id="barcode" placeholder="Barcode">
   <input id="prezzoUnitario" type="number" step="0.01" placeholder="Prezzo unitario €">
@@ -62,6 +77,7 @@
         <th>Nome</th>
         <th>Categoria</th>
         <th>Marca</th>
+        <th>Taglia</th>
         <th>Quantità</th>
         <th>Barcode</th>
         <th>Prezzo Unit. €</th>
@@ -111,17 +127,19 @@
       const nome = document.getElementById("nome").value;
       const categoria = document.getElementById("categoria").value;
       const marca = document.getElementById("marca").value;
+      const taglia = document.getElementById("taglia").value;
       const quantita = parseInt(document.getElementById("quantita").value);
       const barcode = document.getElementById("barcode").value;
       const prezzoUnitario = parseFloat(document.getElementById("prezzoUnitario").value);
       const prezzoVendita = parseFloat(document.getElementById("prezzoVendita").value);
 
-      if (!nome || !categoria || !marca || isNaN(quantita) || !barcode || isNaN(prezzoUnitario) || isNaN(prezzoVendita)) return;
+      if (!nome || !categoria || !marca || !taglia || isNaN(quantita) || !barcode || isNaN(prezzoUnitario) || isNaN(prezzoVendita)) return;
 
       await addDoc(collection(db, "articoli"), {
         nome,
         categoria,
         marca,
+        taglia,
         quantita,
         barcode,
         prezzoUnitario,
@@ -166,6 +184,7 @@
           <td>${art.nome}</td>
           <td>${art.categoria}</td>
           <td>${art.marca}</td>
+          <td>${art.taglia}</td>
           <td>${art.quantita}</td>
           <td>${art.barcode}</td>
           <td>€ ${art.prezzoUnitario.toFixed(2)}</td>
