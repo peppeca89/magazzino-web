@@ -46,6 +46,7 @@
     <option value="Titleist">Titleist</option>
     <option value="Footjoy">Footjoy</option>
     <option value="Callaway">Callaway</option>
+    <option value="Adidas">Adidas</option>
     <option value="Varie">Varie</option>
   </select>
   <select id="taglia">
@@ -79,6 +80,7 @@
         <th>Marca</th>
         <th>Taglia</th>
         <th>Quantità</th>
+        <th>Nome</th>
         <th>Barcode</th>
         <th>Prezzo Unit. €</th>
         <th>Totale €</th>
@@ -99,6 +101,7 @@
   <table>
     <thead>
       <tr>
+        <th>Nome</th>
         <th>Barcode</th>
         <th>Quantità</th>
         <th>Data</th>
@@ -195,7 +198,10 @@
       });
     }
 
+    let articoli = [];
     async function caricaScarichi() {
+      const articoliSnap = await getDocs(collection(db, "articoli"));
+      articoli = articoliSnap.docs.map(d => d.data());
       const tabella = document.getElementById("tabella-scarichi");
       const q = query(collection(db, "scarichi"), orderBy("data", "desc"));
       const snapshot = await getDocs(q);
@@ -203,7 +209,9 @@
       snapshot.forEach((docSnap) => {
         const s = docSnap.data();
         const row = document.createElement("tr");
-        row.innerHTML = `<td>${s.barcode}</td><td>${s.quantita}</td><td>${s.data}</td>`;
+        const articolo = articoli.find(a => a.barcode === s.barcode);
+        const nome = articolo ? articolo.nome : "—";
+        row.innerHTML = `<td>${nome}</td><td>${s.barcode}</td><td>${s.quantita}</td><td>${s.data}</td>`;
         tabella.appendChild(row);
       });
     }
