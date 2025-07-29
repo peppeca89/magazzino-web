@@ -73,6 +73,13 @@
 </head>
 <body>
   <h1>Gestione Magazzino</h1>
+  <div style="margin-bottom: 20px;">
+    <button onclick="mostraSezione('carico')">Carico Articoli</button>
+    <button onclick="mostraSezione('scarico')">Scarico Magazzino</button>
+  </div>
+  <div id="sezione-carico">
+
+  <h1>Gestione Magazzino</h1>
   <div>
     <input type="file" id="file-excel" accept=".xlsx,.xls" />
     <button onclick="importaDaExcel()">Importa da Excel</button>
@@ -129,6 +136,8 @@
   <tbody id="tabella-articoli"></tbody>
 </table>
 
+</div>
+<div id="sezione-scarico" style="display:none;">
 <h2>Scarico Magazzino</h2>
 <input id="scarico-barcode" placeholder="Barcode">
 <input id="scarico-quantita" type="number" placeholder="Quantità da scaricare">
@@ -244,6 +253,10 @@
 
   caricaArticoli();
   caricaScarichi();
+  window.mostraSezione = function(sezione) {
+    document.getElementById("sezione-carico").style.display = sezione === "carico" ? "block" : "none";
+    document.getElementById("sezione-scarico").style.display = sezione === "scarico" ? "block" : "none";
+  }
 </script>
 </body>
 </html>
