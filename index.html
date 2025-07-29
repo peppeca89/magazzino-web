@@ -199,17 +199,18 @@
         if (art.sogliaMinima && art.quantita <= art.sogliaMinima) {
           row.style.backgroundColor = '#ffe0e0';
         }
-        row.innerHTML = `
-          <td>${art.nome}</td>
-          <td>${art.categoria}</td>
-          <td>${art.marca}</td>
-          <td>${art.taglia}</td>
-          <td>${art.quantita}</td>
-          <td>${art.barcode}</td>
-          <td>€ ${art.prezzoUnitario.toFixed(2)}</td>
-          <td>€ ${prezzoTot}</td>
-          <td>€ ${art.prezzoVendita.toFixed(2)}</td>
-        `;
+  row.innerHTML = `
+  <td>${art.nome}</td>
+  <td>${art.categoria}</td>
+  <td>${art.marca}</td>
+  <td>${art.taglia}</td>
+  <td>${art.quantita}</td>
+  <td>${art.barcode}</td>
+  <td>€ ${art.prezzoUnitario.toFixed(2)}</td>
+  <td>€ ${prezzoTot}</td>
+  <td>€ ${art.prezzoVendita.toFixed(2)}</td>
+  <td><button onclick="eliminaArticolo('${docSnap.id}')">🗑</button></td>
+`;
         tabella.appendChild(row);
       });
     }
