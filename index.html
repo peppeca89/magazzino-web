@@ -178,9 +178,10 @@
       if (!barcode || isNaN(quantita) || !data) return alert("Compila tutti i campi.");
 
       const articoliSnap = await getDocs(collection(db, "articoli"));
-      const match = articoliSnap.docs.find(doc => doc.data().barcode === barcode);
-      if (!match) return alert("Articolo non trovato.");
-      const art = match.data();
+      const matchDoc = articoliSnap.docs.find(doc => doc.data().barcode === barcode);
+if (!matchDoc) return alert("Articolo non trovato.");
+const art = matchDoc.data();
+const matchId = matchDoc.id;
 
       const nuovoValore = art.quantita - quantita;
       if (nuovoValore < 0) return alert("Quantità insufficiente.");
