@@ -231,10 +231,10 @@
       });
     });
 
-    function mostraSezione(sezione) {
-      document.getElementById("sezione-carico").style.display = sezione === "carico" ? "block" : "none";
-      document.getElementById("sezione-scarico").style.display = sezione === "scarico" ? "block" : "none";
-    }
+    window.mostraSezione = function(sezione) {
+  document.getElementById("sezione-carico").style.display = sezione === "carico" ? "block" : "none";
+  document.getElementById("sezione-scarico").style.display = sezione === "scarico" ? "block" : "none";
+}
 
     caricaArticoli();
     caricaScarichi();
