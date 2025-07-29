@@ -244,8 +244,15 @@
         await deleteDoc(doc(db, "articoli", id));
         alert("Articolo eliminato.");
         caricaArticoli();
-      }
-    }
+       // Filtro dinamico per inventario
+document.getElementById("filtro-inventario").addEventListener("input", function () {
+  const filtro = this.value.toLowerCase();
+  const righe = document.querySelectorAll("#tabella-articoli tr");
+  righe.forEach(riga => {
+    const testo = riga.innerText.toLowerCase();
+    riga.style.display = testo.includes(filtro) ? "" : "none";
+  });
+});
 
     caricaArticoli();
     caricaScarichi();
