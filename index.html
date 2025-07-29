@@ -3,20 +3,30 @@
 <head>
   <title>Gestione Magazzino</title>
   <style>
+    .alert-soglia { background-color: #ffe0e0 !important; font-weight: bold; }
+
     body { font-family: Arial, sans-serif; margin: 40px; background: #fafafa; color: #333; }
     h1, h2, h3 { color: #444; }
-    input, select, button { font-size: 14px; border: 1px solid #ccc; border-radius: 4px; padding: 6px; margin: 4px 4px 10px 0; }
+    input, select, button { font-size: 14px; border: 1px solid #ccc; border-radius: 4px; }
+    input, select { padding: 6px; margin: 4px 4px 10px 0; }
     button { background-color: #007BFF; color: white; border: none; cursor: pointer; padding: 6px 12px; }
     button:hover { background-color: #0056b3; }
-    table { background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 100%; border-collapse: collapse; margin-top: 20px; }
+    table { background: white; border-radius: 4px; overflow: hidden; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    th { background-color: #f0f0f0; font-weight: 600; }
+    .danger { background-color: #ffe0e0; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #f4f4f4; font-weight: 600; }
-    .alert-soglia { background-color: #ffe0e0 !important; font-weight: bold; }
+    th { background-color: #f4f4f4; }
+    input, select { margin: 4px; padding: 6px; }
+    button { padding: 6px 10px; margin-top: 10px; }
+    h2 { margin-top: 40px; }
   </style>
 </head>
 <body>
   <h1>Gestione Magazzino</h1>
 
+  <!-- Sezione Carico Articoli -->
   <h2>Carico Articoli</h2>
   <input id="nome" placeholder="Nome articolo">
   <select id="categoria">
@@ -73,26 +83,29 @@
   <input id="prezzoVendita" type="number" step="0.01" placeholder="Prezzo vendita €">
   <button id="btn-aggiungi">Aggiungi</button>
 
-  <h2>Inventario</h2>
-  <input type="text" id="filtro-inventario" placeholder="Cerca in inventario..." style="width: 100%; margin-bottom: 10px;">
-  <table>
-    <thead>
-      <tr>
-        <th>Nome</th>
-        <th>Categoria</th>
-        <th>Marca</th>
-        <th>Taglia</th>
-        <th>Quantità</th>
-        <th>Barcode</th>
-        <th>Prezzo Unit. €</th>
-        <th>Totale €</th>
-        <th>Prezzo Vendita €</th>
-        <th>Azioni</th>
-      </tr>
-    </thead>
-    <tbody id="tabella-articoli"></tbody>
-  </table>
+  <!-- Sezione Inventario -->
+<h2>Inventario</h2>
+<input type="text" id="filtro-inventario" placeholder="Cerca in inventario..." style="width: 100%; margin-bottom: 10px; padding: 6px;">
 
+<table>
+  <thead>
+    <tr>
+      <th>Nome</th>
+      <th>Categoria</th>
+      <th>Marca</th>
+      <th>Taglia</th>
+      <th>Quantità</th>
+      <th>Barcode</th>
+      <th>Prezzo Unit. €</th>
+      <th>Totale €</th>
+      <th>Prezzo Vendita €</th>
+      <th>Azioni</th>
+    </tr>
+  </thead>
+  <tbody id="tabella-articoli"></tbody>
+</table>
+
+  <!-- Sezione Scarico -->
   <h2>Scarico Magazzino</h2>
   <input id="scarico-barcode" placeholder="Barcode">
   <input id="scarico-quantita" type="number" placeholder="Quantità da scaricare">
@@ -113,7 +126,139 @@
   </table>
 
   <script type="module">
-    // JavaScript sarà aggiunto dinamicamente nello sviluppo
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkgbm32Nvszr6e8us3xfBMTOLv79w_NNM",
+      authDomain: "proshop2025-3a805.firebaseapp.com",
+      projectId: "proshop2025-3a805",
+      storageBucket: "proshop2025-3a805.appspot.com",
+      messagingSenderId: "936600744193",
+      appId: "1:936600744193:web:502da749e26452ed72b00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function aggiungiArticolo() {
+      const nome = document.getElementById("nome").value;
+      const categoria = document.getElementById("categoria").value;
+      const marca = document.getElementById("marca").value;
+      const taglia = document.getElementById("taglia").value;
+      const quantita = parseInt(document.getElementById("quantita").value);
+      const barcode = document.getElementById("barcode").value;
+      const prezzoUnitario = parseFloat(document.getElementById("prezzoUnitario").value);
+      const prezzoVendita = parseFloat(document.getElementById("prezzoVendita").value);
+
+      if (!nome || !categoria || !marca || !taglia || isNaN(quantita) || !barcode || isNaN(prezzoUnitario) || isNaN(prezzoVendita)) return;
+
+      await addDoc(collection(db, "articoli"), {
+        nome,
+        categoria,
+        marca,
+        taglia,
+        quantita,
+        barcode,
+        prezzoUnitario,
+        prezzoVendita
+      });
+
+      alert("Articolo aggiunto!");
+      location.reload();
+    }
+
+    async function scaricaArticolo() {
+      const barcode = document.getElementById("scarico-barcode").value;
+      const quantita = parseInt(document.getElementById("scarico-quantita").value);
+      const data = document.getElementById("scarico-data").value;
+      if (!barcode || isNaN(quantita) || !data) return alert("Compila tutti i campi.");
+
+      const articoliSnap = await getDocs(collection(db, "articoli"));
+      const match = articoliSnap.docs.find(doc => doc.data().barcode === barcode);
+      if (!match) return alert("Barcode non trovato.");
+
+      const articolo = match.data();
+      const nuovoValore = articolo.quantita - quantita;
+      if (nuovoValore < 0) return alert("Quantità insufficiente.");
+
+      await updateDoc(doc(db, "articoli", match.id), { quantita: nuovoValore });
+      await addDoc(collection(db, "scarichi"), { barcode, quantita, data });
+
+      alert("Scarico registrato.");
+      caricaArticoli();
+      caricaScarichi();
+    }
+
+    async function caricaArticoli() {
+      const tabella = document.getElementById("tabella-articoli");
+      const snapshot = await getDocs(collection(db, "articoli"));
+      tabella.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const art = docSnap.data();
+        const prezzoTot = (art.prezzoUnitario * art.quantita).toFixed(2);
+        const row = document.createElement("tr");
+        if (art.sogliaMinima && art.quantita <= art.sogliaMinima) {
+          row.style.backgroundColor = '#ffe0e0';
+        }
+  row.innerHTML = `
+  <td>${art.nome}</td>
+  <td>${art.categoria}</td>
+  <td>${art.marca}</td>
+  <td>${art.taglia}</td>
+  <td>${art.quantita}</td>
+  <td>${art.barcode}</td>
+  <td>€ ${art.prezzoUnitario.toFixed(2)}</td>
+  <td>€ ${prezzoTot}</td>
+  <td>€ ${art.prezzoVendita.toFixed(2)}</td>
+  <td><button onclick="eliminaArticolo('${docSnap.id}')">🗑</button></td>
+`;
+        tabella.appendChild(row);
+      });
+    }
+
+    let articoli = [];
+    async function caricaScarichi() {
+      const articoliSnap = await getDocs(collection(db, "articoli"));
+      articoli = articoliSnap.docs.map(d => d.data());
+      const tabella = document.getElementById("tabella-scarichi");
+      const q = query(collection(db, "scarichi"), orderBy("data", "desc"));
+      const snapshot = await getDocs(q);
+      tabella.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const s = docSnap.data();
+        const row = document.createElement("tr");
+        const articolo = articoli.find(a => a.barcode === s.barcode);
+        const nome = articolo ? articolo.nome : "—";
+        row.innerHTML = `<td>${nome}</td><td>${s.barcode}</td><td>${s.quantita}</td><td>${s.data}</td>`;
+        tabella.appendChild(row);
+      });
+    }
+
+    document.getElementById("btn-aggiungi").addEventListener("click", aggiungiArticolo);
+    document.getElementById("btn-scarica").addEventListener("click", scaricaArticolo);
+    document.getElementById("scarico-data").valueAsDate = new Date();
+
+        window.eliminaArticolo = async function(id) {
+      if (confirm("Sei sicuro di voler eliminare questo articolo?")) {
+        await deleteDoc(doc(db, "articoli", id));
+        alert("Articolo eliminato.");
+        caricaArticoli();
+      }
+    }
+
+    // Filtro dinamico per inventario
+    document.getElementById("filtro-inventario").addEventListener("input", function () {
+      const filtro = this.value.toLowerCase();
+      const righe = document.querySelectorAll("#tabella-articoli tr");
+      righe.forEach(riga => {
+        const testo = riga.innerText.toLowerCase();
+        riga.style.display = testo.includes(filtro) ? "" : "none";
+      });
+    });
+
+    caricaArticoli();
+    caricaScarichi();
   </script>
 </body>
 </html>
