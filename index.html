@@ -110,11 +110,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    function mostraSezione(id) {
-      document.getElementById("sezione-carico").classList.add("hidden");
-      document.getElementById("sezione-scarico").classList.add("hidden");
-      document.getElementById(`sezione-${id}`).classList.remove("hidden");
-    }
+   function mostraSezione(id) {
+  document.getElementById("sezione-carico").classList.add("hidden");
+  document.getElementById("sezione-scarico").classList.add("hidden");
+  document.getElementById(`sezione-${id}`).classList.remove("hidden");
+}
+
+window.mostraSezione = mostraSezione;
 
     document.getElementById("scarico-data").valueAsDate = new Date();
 
