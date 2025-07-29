@@ -93,7 +93,7 @@
     <h3>Storico Scarichi</h3>
     <table>
       <thead>
-        <tr><th>Nome</th><th>Barcode</th><th>Quantità</th><th>Data</th></tr>
+        <tr><th>Nome</th><th>Barcode</th><th>Codice</th><th>Quantità</th><th>Data</th></tr>
       </thead>
       <tbody id="tabella-scarichi"></tbody>
     </table>
@@ -209,7 +209,8 @@
         const s = docSnap.data();
         const art = articoli.find(a => a.barcode === s.barcode);
         const nome = art ? art.nome : "—";
-        tabella.innerHTML += `<tr><td>${nome}</td><td>${s.barcode}</td><td>${s.quantita}</td><td>${s.data}</td></tr>`;
+        const codice = art ? art.codice || "" : "—";
+        tabella.innerHTML += `<tr><td>${nome}</td><td>${s.barcode}</td><td>${codice}</td><td>${s.quantita}</td><td>${s.data}</td></tr>`;
       });
     }
 
