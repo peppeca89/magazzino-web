@@ -186,7 +186,7 @@ const matchId = matchDoc.id;
       const nuovoValore = art.quantita - quantita;
       if (nuovoValore < 0) return alert("Quantità insufficiente.");
 
-      await updateDoc(doc(db, "articoli", match.id), { quantita: nuovoValore });
+      aawait updateDoc(doc(db, "articoli", matchId), { quantita: nuovoValore });
       await addDoc(collection(db, "scarichi"), { barcode, quantita, data });
 
       caricaArticoli();
