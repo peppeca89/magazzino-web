@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Magazzino</title>
+</head>
+<body>
+  <h1>Gestione Magazzino</h1>
+
+  <input id="nome" placeholder="Nome articolo">
+  <input id="quantita" type="number" placeholder="Quantità">
+  <button onclick="aggiungiArticolo()">Aggiungi</button>
+
+  <h2>Inventario</h2>
+  <ul id="lista-articoli"></ul>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "INSERISCI_API_KEY",
+      authDomain: "INSERISCI_AUTH_DOMAIN",
+      projectId: "INSERISCI_PROJECT_ID",
+      storageBucket: "INSERISCI_STORAGE_BUCKET",
+      messagingSenderId: "INSERISCI_SENDER_ID",
+      appId: "INSERISCI_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function aggiungiArticolo() {
+      const nome = document.getElementById("nome").value;
+      const quantita = parseInt(document.getElementById("quantita").value);
+      if (!nome || !quantita) return;
+
+      await addDoc(collection(db, "articoli"), { nome, quantita });
+      alert("Articolo aggiunto!");
+      location.reload();
+    }
+
+    async function caricaArticoli() {
+      const lista = document.getElementById("lista-articoli");
+      const querySnapshot = await getDocs(collection(db, "articoli"));
+      querySnapshot.forEach((doc) => {
+        const art = doc.data();
+        const li = document.createElement("li");
+        li.textContent = `${art.nome} - ${art.quantita}`;
+        lista.appendChild(li);
+      });
+    }
+
+    caricaArticoli();
+  </script>
+</body>
+</html>
