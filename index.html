@@ -8,7 +8,7 @@
 
   <input id="nome" placeholder="Nome articolo">
   <input id="quantita" type="number" placeholder="Quantità">
-  <button onclick="aggiungiArticolo()">Aggiungi</button>
+  <button id="btn-aggiungi">Aggiungi</button>
 
   <h2>Inventario</h2>
   <ul id="lista-articoli"></ul>
@@ -33,7 +33,7 @@
     async function aggiungiArticolo() {
       const nome = document.getElementById("nome").value;
       const quantita = parseInt(document.getElementById("quantita").value);
-      if (!nome || !quantita) return;
+      if (!nome || isNaN(quantita)) return;
 
       await addDoc(collection(db, "articoli"), { nome, quantita });
       alert("Articolo aggiunto!");
@@ -51,7 +51,11 @@
       });
     }
 
+    // Carica lista all’avvio
     caricaArticoli();
+
+    // Collega bottone all’evento
+    document.getElementById("btn-aggiungi").addEventListener("click", aggiungiArticolo);
   </script>
 </body>
 </html>
