@@ -239,20 +239,23 @@
     document.getElementById("btn-scarica").addEventListener("click", scaricaArticolo);
     document.getElementById("scarico-data").valueAsDate = new Date();
 
-    window.eliminaArticolo = async function(id) {
+        window.eliminaArticolo = async function(id) {
       if (confirm("Sei sicuro di voler eliminare questo articolo?")) {
         await deleteDoc(doc(db, "articoli", id));
         alert("Articolo eliminato.");
         caricaArticoli();
-       // Filtro dinamico per inventario
-document.getElementById("filtro-inventario").addEventListener("input", function () {
-  const filtro = this.value.toLowerCase();
-  const righe = document.querySelectorAll("#tabella-articoli tr");
-  righe.forEach(riga => {
-    const testo = riga.innerText.toLowerCase();
-    riga.style.display = testo.includes(filtro) ? "" : "none";
-  });
-});
+      }
+    }
+
+    // Filtro dinamico per inventario
+    document.getElementById("filtro-inventario").addEventListener("input", function () {
+      const filtro = this.value.toLowerCase();
+      const righe = document.querySelectorAll("#tabella-articoli tr");
+      righe.forEach(riga => {
+        const testo = riga.innerText.toLowerCase();
+        riga.style.display = testo.includes(filtro) ? "" : "none";
+      });
+    });
 
     caricaArticoli();
     caricaScarichi();
