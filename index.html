@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
+  <meta charset="UTF-8" />
   <title>Gestione Magazzino</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 40px; background: #fafafa; color: #333; }
@@ -25,26 +26,12 @@
       <input id="nome" placeholder="Nome articolo">
       <select id="categoria">
         <option value="">Seleziona categoria</option>
-        <option value="AlzaPitch">AlzaPitch</option>
-        <option value="Attrezzatura">Attrezzatura</option>
-        <option value="BackPack">BackPack</option>
-        <option value="Calze">Calze</option>
-        <option value="Cappello">Cappello</option>
-        <option value="Cinta">Cinta</option>
-        <option value="Duffle Bag">Duffle Bag</option>
-        <option value="Felpa">Felpa</option>
-        <option value="Giubotti">Giubotti</option>
-        <option value="Gonna">Gonna</option>
-        <option value="Guanto">Guanto</option>
-        <option value="Guanto (Logato)">Guanto (Logato)</option>
-        <option value="Palline">Palline</option>
-        <option value="Pantaloncini">Pantaloncini</option>
-        <option value="Pantaloni">Pantaloni</option>
-        <option value="Polo">Polo</option>
-        <option value="Sacca">Sacca</option>
-        <option value="Scarpe">Scarpe</option>
-        <option value="Shoe Bag">Shoe Bag</option>
-        <option value="Towel">Towel</option>
+        <option value="AlzaPitch">AlzaPitch</option><option value="Attrezzatura">Attrezzatura</option><option value="BackPack">BackPack</option>
+        <option value="Calze">Calze</option><option value="Cappello">Cappello</option><option value="Cinta">Cinta</option><option value="Duffle Bag">Duffle Bag</option>
+        <option value="Felpa">Felpa</option><option value="Giubotti">Giubotti</option><option value="Gonna">Gonna</option><option value="Guanto">Guanto</option>
+        <option value="Guanto (Logato)">Guanto (Logato)</option><option value="Palline">Palline</option><option value="Pantaloncini">Pantaloncini</option>
+        <option value="Pantaloni">Pantaloni</option><option value="Polo">Polo</option><option value="Sacca">Sacca</option><option value="Scarpe">Scarpe</option>
+        <option value="Shoe Bag">Shoe Bag</option><option value="Towel">Towel</option>
       </select>
       <select id="marca">
         <option value="">Marca</option>
@@ -57,17 +44,8 @@
       </select>
       <select id="taglia">
         <option value="">Taglia</option>
-        <option value="XS">XS</option>
-        <option value="S">S</option>
-        <option value="M">M</option>
-        <option value="M/L">M/L</option>
-        <option value="L">L</option>
-        <option value="XL">XL</option>
-        <option value="30X32">30X32</option>
-        <option value="30X30">30X30</option>
-        <option value="32X32">32X32</option>
-        <option value="34X32">34X32</option>
-        <option value="36X32">36X32</option>
+        <option value="XS">XS</option><option value="S">S</option><option value="M">M</option><option value="M/L">M/L</option><option value="L">L</option><option value="XL">XL</option>
+        <option value="30X32">30X32</option><option value="30X30">30X30</option><option value="32X32">32X32</option><option value="34X32">34X32</option><option value="36X32">36X32</option>
         <option value="UNICA">UNICA</option>
       </select>
       <input id="quantita" type="number" placeholder="Quantità">
@@ -84,26 +62,146 @@
   </div>
 
   <h2>Inventario</h2>
-  <input type="text" id="filtro-inventario" placeholder="Cerca in inventario...">
+  <input type="text" id="filtro-inventario" placeholder="Cerca in inventario..." style="width: 100%; margin-bottom: 10px;">
   <table>
     <thead>
       <tr>
-        <th>Nome</th>
-        <th>Categoria</th>
-        <th>Marca</th>
-        <th>Taglia</th>
-        <th>Quantità</th>
-        <th>Barcode</th>
-        <th>Prezzo Unit. €</th>
-        <th>Totale €</th>
-        <th>Prezzo Vendita €</th>
-        <th>Azioni</th>
+        <th>Nome</th><th>Categoria</th><th>Marca</th><th>Taglia</th><th>Quantità</th>
+        <th>Barcode</th><th>Prezzo Unit. €</th><th>Totale €</th><th>Prezzo Vendita €</th><th>Azioni</th>
       </tr>
     </thead>
     <tbody id="tabella-articoli"></tbody>
   </table>
 
-  <script>
+  <h2>Scarico Magazzino</h2>
+  <input id="scarico-barcode" placeholder="Barcode">
+  <input id="scarico-quantita" type="number" placeholder="Quantità da scaricare">
+  <input id="scarico-data" type="date">
+  <button id="btn-scarica">Scarica dal Magazzino</button>
+
+  <h3>Storico Scarichi</h3>
+  <table>
+    <thead>
+      <tr><th>Nome</th><th>Barcode</th><th>Quantità</th><th>Data</th></tr>
+    </thead>
+    <tbody id="tabella-scarichi"></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAkgbm32Nvszr6e8us3xfBMTOLv79w_NNM",
+      authDomain: "proshop2025-3a805.firebaseapp.com",
+      projectId: "proshop2025-3a805",
+      storageBucket: "proshop2025-3a805.appspot.com",
+      messagingSenderId: "936600744193",
+      appId: "1:936600744193:web:502da749e26452ed72b00"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function aggiungiArticolo() {
+      const nome = document.getElementById("nome").value;
+      const categoria = document.getElementById("categoria").value;
+      const marca = document.getElementById("marca").value;
+      const taglia = document.getElementById("taglia").value;
+      const quantita = parseInt(document.getElementById("quantita").value);
+      const barcode = document.getElementById("barcode").value;
+      const prezzoUnitario = parseFloat(document.getElementById("prezzoUnitario").value);
+      const prezzoVendita = parseFloat(document.getElementById("prezzoVendita").value);
+      const sogliaMinima = parseInt(document.getElementById("sogliaMinima").value);
+
+      if (!nome || !categoria || !marca || !taglia || isNaN(quantita) || !barcode || isNaN(prezzoUnitario) || isNaN(prezzoVendita)) return;
+
+      await addDoc(collection(db, "articoli"), {
+        nome, categoria, marca, taglia, quantita, barcode, prezzoUnitario, prezzoVendita, sogliaMinima
+      });
+
+      alert("Articolo aggiunto!");
+      caricaArticoli();
+    }
+
+    async function scaricaArticolo() {
+      const barcode = document.getElementById("scarico-barcode").value;
+      const quantita = parseInt(document.getElementById("scarico-quantita").value);
+      const data = document.getElementById("scarico-data").value;
+      if (!barcode || isNaN(quantita) || !data) return alert("Compila tutti i campi.");
+
+      const articoliSnap = await getDocs(collection(db, "articoli"));
+      const match = articoliSnap.docs.find(doc => doc.data().barcode === barcode);
+      if (!match) return alert("Barcode non trovato.");
+
+      const articolo = match.data();
+      const nuovoValore = articolo.quantita - quantita;
+      if (nuovoValore < 0) return alert("Quantità insufficiente.");
+
+      await updateDoc(doc(db, "articoli", match.id), { quantita: nuovoValore });
+      await addDoc(collection(db, "scarichi"), { barcode, quantita, data });
+
+      alert("Scarico registrato.");
+      caricaArticoli();
+      caricaScarichi();
+    }
+
+    async function caricaArticoli() {
+      const tabella = document.getElementById("tabella-articoli");
+      const snapshot = await getDocs(collection(db, "articoli"));
+      tabella.innerHTML = "";
+
+      let totaleMagazzino = 0;
+
+      snapshot.forEach((docSnap) => {
+        const art = docSnap.data();
+        const prezzoTot = art.prezzoUnitario * art.quantita;
+        totaleMagazzino += prezzoTot;
+
+        const row = document.createElement("tr");
+        if (art.sogliaMinima && art.quantita <= art.sogliaMinima) {
+          row.classList.add("alert-soglia");
+        }
+        row.innerHTML = `
+          <td>${art.nome}</td><td>${art.categoria}</td><td>${art.marca}</td><td>${art.taglia}</td>
+          <td>${art.quantita}</td><td>${art.barcode}</td>
+          <td>€ ${art.prezzoUnitario.toFixed(2)}</td>
+          <td>€ ${prezzoTot.toFixed(2)}</td>
+          <td>€ ${art.prezzoVendita.toFixed(2)}</td>
+          <td><button onclick="eliminaArticolo('${docSnap.id}')">🗑</button></td>`;
+        tabella.appendChild(row);
+      });
+
+      document.getElementById("valoreTotaleMagazzino").innerText = `€ ${totaleMagazzino.toFixed(2)}`;
+    }
+
+    async function caricaScarichi() {
+      const articoliSnap = await getDocs(collection(db, "articoli"));
+      const articoli = articoliSnap.docs.map(d => d.data());
+      const tabella = document.getElementById("tabella-scarichi");
+      const q = query(collection(db, "scarichi"), orderBy("data", "desc"));
+      const snapshot = await getDocs(q);
+      tabella.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const s = docSnap.data();
+        const art = articoli.find(a => a.barcode === s.barcode);
+        const nome = art ? art.nome : "—";
+        tabella.innerHTML += `<tr><td>${nome}</td><td>${s.barcode}</td><td>${s.quantita}</td><td>${s.data}</td></tr>`;
+      });
+    }
+
+    window.eliminaArticolo = async function(id) {
+      if (confirm("Sei sicuro di voler eliminare questo articolo?")) {
+        await deleteDoc(doc(db, "articoli", id));
+        alert("Articolo eliminato.");
+        caricaArticoli();
+      }
+    }
+
+    document.getElementById("btn-aggiungi").addEventListener("click", aggiungiArticolo);
+    document.getElementById("btn-scarica").addEventListener("click", scaricaArticolo);
+    document.getElementById("scarico-data").valueAsDate = new Date();
+
     document.getElementById("filtro-inventario").addEventListener("input", function () {
       const filtro = this.value.toLowerCase();
       const righe = document.querySelectorAll("#tabella-articoli tr");
@@ -112,6 +210,9 @@
         riga.style.display = testo.includes(filtro) ? "" : "none";
       });
     });
+
+    caricaArticoli();
+    caricaScarichi();
   </script>
 </body>
 </html>
