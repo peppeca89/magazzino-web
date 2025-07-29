@@ -120,8 +120,17 @@
         nome, categoria, marca, taglia, quantita, barcode, prezzoUnitario, prezzoVendita, sogliaMinima
       });
 
-      alert("Articolo aggiunto!");
-      caricaArticoli();
+     alert("Articolo aggiunto!");
+document.getElementById("nome").value = "";
+document.getElementById("categoria").value = "";
+document.getElementById("marca").value = "";
+document.getElementById("taglia").value = "";
+document.getElementById("quantita").value = "";
+document.getElementById("barcode").value = "";
+document.getElementById("prezzoUnitario").value = "";
+document.getElementById("sogliaMinima").value = "";
+document.getElementById("prezzoVendita").value = "";
+caricaArticoli();
     }
 
     async function scaricaArticolo() {
