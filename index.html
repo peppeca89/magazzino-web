@@ -135,13 +135,12 @@ async function aggiungiArticolo() {
   const quantita = parseInt(document.getElementById("quantita").value);
   const barcode = document.getElementById("barcode").value;
   const prezzoUnitario = parseFloat(document.getElementById("prezzoUnitario").value);
-  const prezzoVendita = parseFloat(document.getElementById("prezzoVendita").value);
   const sogliaMinima = parseInt(document.getElementById("sogliaMinima").value);
 
   if (!nome || !categoria || !marca || !taglia || isNaN(quantita) || !barcode || isNaN(prezzoUnitario) || isNaN(prezzoVendita)) return;
 
   await addDoc(collection(db, "articoli"), {
-    nome, codice, categoria, marca, taglia, quantita, barcode, prezzoUnitario, prezzoVendita, sogliaMinima
+    nome, codice, categoria, marca, taglia, quantita, barcode, prezzoUnitario, sogliaMinima
   });
 
   alert("Articolo aggiunto!");
