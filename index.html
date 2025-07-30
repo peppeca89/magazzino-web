@@ -137,7 +137,7 @@ async function aggiungiArticolo() {
   const prezzoUnitario = parseFloat(document.getElementById("prezzoUnitario").value);
   const sogliaMinima = parseInt(document.getElementById("sogliaMinima").value);
 
-  if (!nome || !categoria || !marca || !taglia || isNaN(quantita) || !barcode || isNaN(prezzoUnitario) )) return;
+  if (!nome || !categoria || !marca || !taglia || isNaN(quantita) || !barcode || isNaN(prezzoUnitario)) return;
 
   await addDoc(collection(db, "articoli"), {
     nome, codice, categoria, marca, taglia, quantita, barcode, prezzoUnitario, sogliaMinima
