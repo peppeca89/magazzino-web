@@ -168,7 +168,6 @@ async function caricaArticoli() {
       <td>${art.quantita}</td><td>${art.barcode}</td><td>${art.codice || ""}</td>
       <td>€ ${art.prezzoUnitario.toFixed(2)}</td>
       <td>€ ${(art.prezzoUnitario * art.quantita).toFixed(2)}</td>
-      <td>€ ${art.prezzoVendita.toFixed(2)}</td>
       <td><button onclick="eliminaArticolo('${docSnap.id}')">🗑</button></td>`;
     tabella.appendChild(row);
   });
