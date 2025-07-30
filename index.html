@@ -73,6 +73,7 @@
         <button id="btn-aggiungi">Aggiungi</button>
         <input type="file" id="inputExcel" accept=".xlsx">
         <button onclick="importaDaExcel()">Importa da Excel</button>
+        <button onclick="esportaInventario()">Esporta Inventario</button>
       </div>
       <div id="valore-magazzino-box">
         <h3>Valore Totale Magazzino</h3>
@@ -149,7 +150,19 @@ async function aggiungiArticolo() {
   ["nome", "codice", "categoria", "marca", "taglia", "quantita", "barcode", "prezzoUnitario", "sogliaMinima"].forEach(id => document.getElementById(id).value = "");
   caricaArticoli();
 }
+window.esportaInventario = async function () {
+  const snapshot = await getDocs(collection(db, "articoli"));
+  const dati = snapshot.docs.map(doc => doc.data());
+  
+  const ws = XLSX.utils.json_to_sheet(dati);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Inventario");
 
+  XLSX.writeFile(wb, "inventario_magazzino.xlsx");
+};
+
+caricaArticoli();
+caricaScarichi();
 async function caricaArticoli() {
   const tabella = document.getElementById("tabella-articoli");
   const snapshot = await getDocs(collection(db, "articoli"));
